@@ -18,8 +18,10 @@ const cities = [
   {
     id: 1,
     name: "Mumbai",
-    description:
-      "🌆 Mumbai, the bustling capital of Maharashtra, is India's largest city and financial powerhouse. Known for its lively streets, stunning skyline, and scenic waterfront along the Arabian Sea, it's the heart of India's film industry 🎬, famously home to Bollywood. The city boasts diverse neighborhoods, from upscale Marine Drive 🏖️ to historic Fort 🏛️, and markets like Crawford Market 🛍️. Notable landmarks include the iconic Gateway of India 🇮🇳, Chhatrapati Shivaji Maharaj Terminus 🚉, and the Bandra-Worli Sea Link 🌉. Mumbai's food scene is legendary, offering street foods like vada pav and pav bhaji 🍲. A city of dreams and contrasts, Mumbai draws people from all over India seeking new opportunities and adventures.",
+    description: `
+      🌆 **Mumbai** is the bustling capital of Maharashtra and the largest city in India, serving as its financial powerhouse.
+      Known for its high-energy streets, iconic skyline, and the scenic Arabian Sea coastline, Mumbai is a city of dreams and contrasts.
+    `,
     image:
       "https://www.andbeyond.com/wp-content/uploads/sites/5/Chhatrapati-Shivaji-Terminus-railway-station-mumbai.jpg",
     latitude: 19.076,
@@ -29,59 +31,18 @@ const cities = [
     id: 2,
     name: "Delhi",
     description:
-      "🕌 Delhi, the capital city of India, is a vibrant mix of history and modernity. Known for its historic monuments, bustling markets, and diverse culture, it has a unique charm that attracts people from around the world.",
+      "🕌 Delhi, the capital city of India, is a vibrant mix of history and modernity.",
     image:
       "https://upload.wikimedia.org/wikipedia/commons/3/3b/India_Gate_in_New_Delhi_03-2016.jpg",
     latitude: 28.6139,
     longitude: 77.209,
   },
-  {
-    id: 3,
-    name: "Bangalore",
-    description:
-      "🏙️ Bangalore, also known as Bengaluru, is the Silicon Valley of India. Known for its tech hubs, pleasant weather, and vibrant culture, it's a bustling city with a mix of modernity and tradition.",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/e/e5/Bangalore_Skyline.jpg",
-    latitude: 12.9716,
-    longitude: 77.5946,
-  },
-  {
-    id: 4,
-    name: "Jaipur",
-    description:
-      "🎨 Jaipur, the Pink City, is famous for its vibrant culture, historic palaces, and forts. Key attractions include the Hawa Mahal, City Palace, and Amer Fort. The city is known for its colorful streets and bustling bazaars.",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/0/0c/Hawa_Mahal_2011.jpg",
-    latitude: 26.9124,
-    longitude: 75.7873,
-  },
-  {
-    id: 5,
-    name: "Kolkata",
-    description:
-      "🎭 Kolkata, the City of Joy, is renowned for its cultural festivals, colonial architecture, and art galleries. Key sites include Victoria Memorial, Howrah Bridge, and the lively markets of New Market.",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/d/da/Victoria_Memorial_Kolkata.jpg",
-    latitude: 22.5726,
-    longitude: 88.3639,
-  },
-  {
-    id: 6,
-    name: "Chennai",
-    description:
-      "🌊 Chennai, the Detroit of India, is known for its cultural heritage, beaches, and temples. Attractions include Marina Beach, Kapaleeshwarar Temple, and Fort St. George.",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/1/1e/Chennai_Central_railway_station.jpg",
-    latitude: 13.0827,
-    longitude: 80.2707,
-  },
 ];
 
 export default function CityPage({ params }) {
-  // Unwrap the params object using React.use()
   const unwrappedParams = use(params);
   const cityData = cities.find(
-    (city) => city.id === parseInt(unwrappedParams.id),
+    (city) => city.id === parseInt(unwrappedParams.id)
   );
 
   const [viewState, setViewState] = useState({
@@ -89,6 +50,9 @@ export default function CityPage({ params }) {
     longitude: cityData?.longitude || 0,
     zoom: 10,
   });
+
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState("");
 
   if (!cityData) {
     return (
@@ -156,7 +120,49 @@ export default function CityPage({ params }) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Reviews coming soon...</p>
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">User Reviews</h2>
+                  <ul className="mb-4 space-y-2">
+                    {reviews.length > 0 ? (
+                      reviews.map((review, index) => (
+                        <li
+                          key={index}
+                          className="p-3 border rounded-md shadow-sm bg-gray-50"
+                        >
+                          <p>{review}</p>
+                        </li>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">
+                        No reviews yet. Be the first to add one!
+                      </p>
+                    )}
+                  </ul>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (newReview.trim()) {
+                        setReviews([...reviews, newReview]);
+                        setNewReview("");
+                      }
+                    }}
+                    className="space-y-3"
+                  >
+                    <textarea
+                      value={newReview}
+                      onChange={(e) => setNewReview(e.target.value)}
+                      placeholder="Write your review..."
+                      className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      rows="3"
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Submit Review
+                    </button>
+                  </form>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
